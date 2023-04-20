@@ -7,7 +7,7 @@ from pathlib import Path
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.dev")
     if sys.argv[1] == "test":
         print("NOTE: Running black formation:")
         print(os.popen(f"black --config {Path(__file__).resolve().parent.parent}/.black.toml .").read())
