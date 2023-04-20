@@ -1,8 +1,10 @@
+import os
+
 from config.settings.base import *  # noqa
 
 DEBUG = False
 
-SECRET_KEY = "django-secret-key"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 ALLOWED_HOSTS = []
 
