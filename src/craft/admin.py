@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from craft.models import Brand, Category, Order, Product
+
+admin.site.register([Category, Brand, Product, Order])
