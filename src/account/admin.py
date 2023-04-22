@@ -2,9 +2,16 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
+from account.models import UserProfile
+
+
+class UserProfileAdminInline(admin.StackedInline):
+    model = UserProfile
+
 
 @admin.register(get_user_model())
 class CustomerAdmin(UserAdmin):
+    inlines = [UserProfileAdminInline]
     ordering = ("first_name", "last_name")
     list_display_links = ("email",)
     readonly_fields = ("email",)
@@ -27,3 +34,8 @@ class CustomerAdmin(UserAdmin):
             },
         ),
     )
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    ordering = ("user",)

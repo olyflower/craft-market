@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.validators import UnicodeUsernameValidator
@@ -78,3 +79,13 @@ class Customer(AbstractBaseUser, PermissionsMixin):
                 birth_date=faker.date_of_birth(),
                 city=faker.city(),
             )
+
+
+class UserProfile(models.Model):
+    GENDER_CHOICES = (("Male", "Male"), ("Female", "Female"))
+    user = models.OneToOneField(get_user_model(), related_name="profile", on_delete=models.CASCADE)
+    gender = models.CharField(max_length=6, choices=GENDER_CHOICES)
+    address = models.CharField(max_length=255, blank=True)
+    order_history = models.TextField(blank=True)
+    payment_method = models.CharField(max_length=50, blank=True)
+    social_media_profiles = models.URLField(null=True, blank=True)
