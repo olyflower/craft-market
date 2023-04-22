@@ -18,6 +18,7 @@ class Category(BaseModel):
 
     class Meta:
         ordering = ["name"]
+        verbose_name_plural = "Categories"
 
     def __str__(self):
         return self.name
@@ -53,7 +54,6 @@ class Brand(BaseModel):
 
 class Product(BaseModel):
     name = models.CharField(max_length=255)
-    user = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE)
     description = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to="product/", blank=True, null=True)
     price = models.DecimalField(max_digits=8, decimal_places=2)

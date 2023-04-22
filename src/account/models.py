@@ -54,6 +54,8 @@ class Customer(AbstractBaseUser, PermissionsMixin):
         full_name = "%s %s" % (self.first_name, self.last_name)
         return full_name.strip()
 
+    get_full_name.short_description = "Name and Surname"
+
     def get_short_name(self):
         """Return the short name for the user."""
         return self.first_name
