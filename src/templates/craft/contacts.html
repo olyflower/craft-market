@@ -1,0 +1,46 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Contacts</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+</head>
+
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title has-text-centered">Contacts</h1>
+            <div class="columns">
+                <div class="column is-half">
+                    <h2 class="subtitle">Address</h2>
+                    <p>123 Main Street</p>
+                    <p>City, State 12345</p>
+                </div>
+                <div class="column is-half">
+                    <h2 class="subtitle">Phone</h2>
+                    <p>Phone: (123) 456-7890</p>
+                    <p>Fax: (123) 456-7891</p>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column is-half">
+                    <h2 class="subtitle">Email</h2>
+                    <p>Email: info@example.com</p>
+                </div>
+                <div class="column is-half">
+                    <h2 class="subtitle">Business Hours</h2>
+                    <p>Monday-Friday: 9am-5pm</p>
+                    <p>Saturday: 10am-3pm</p>
+                    <p>Sunday: Closed</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>
+{% endblock %}

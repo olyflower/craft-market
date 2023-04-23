@@ -1,0 +1,29 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="container">
+  <div class="columns">
+    <div class="column is-6">
+      <h1 class="title">{{ product.name }}</h1>
+      <p>{{ product.description }}</p>
+      <p>Price: {{ product.price }}</p>
+      <img src="{{ product.image.url }}" alt="Product Image">
+    </div>
+    <div class="column is-6">
+      <p>Category: {{ product.category.name }}</p>
+      <p>Brand: {{ product.brand.name }}</p>
+      <p>Quantity: {{ product.quantity }}</p>
+
+      <form action="#" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="product_id" value="{{ product.pk }}">
+        <input type="hidden" name="quantity" value="1">
+        <button class="button is-primary" type="submit">Add to Cart</button>
+      </form>
+
+      <a class="button is-primary" href="{% url 'craft:get_products' %}">Back to Products</a>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

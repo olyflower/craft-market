@@ -1,0 +1,69 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Payment and Delivery</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+</head>
+
+<body>
+    <section class="hero is-primary is-bold">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">
+                    Payment and Delivery
+                </h1>
+                <h2 class="subtitle">
+                    Information about payment methods and delivery options
+                </h2>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="title">Payment Methods</h2>
+            <p>
+                We accept the following payment methods for your purchases:
+            </p>
+            <ul>
+                <li>Credit Card</li>
+                <li>PayPal</li>
+                <li>Bank Transfer</li>
+            </ul>
+
+            <h2 class="title">Delivery Options</h2>
+            <p>
+                We offer the following delivery options for your orders:
+            </p>
+            <ul>
+                <li>Standard Shipping</li>
+                <li>Express Shipping</li>
+                <li>Free Shipping (on orders over $50)</li>
+            </ul>
+
+            <h2 class="title">Delivery Time</h2>
+            <p>
+                The estimated delivery time for your order will depend on your location and the selected delivery option.
+                Standard shipping usually takes 5-7 business days, while express shipping can arrive within 1-3 business
+                days.
+            </p>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                Contact us at <a href="{% url 'craft:contacts' %}">Contacts</a> for more information or if you have any questions about
+                payment and delivery.
+            </p>
+        </div>
+    </footer>
+</body>
+
+</html>
+{% endblock %}

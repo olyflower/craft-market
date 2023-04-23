@@ -1,3 +1,4 @@
+from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView
@@ -24,11 +25,7 @@ class UserRegistration(CreateView):
     form_class = UserRegistrationForm
     success_url = reverse_lazy("core:success_registration")
 
-    # def form_valid(self, form):
-    #     self.object = form.save(commit=False)
-    #     self.object.is_active = False
-    #     self.object.save()
-    #
-    #     send_registration_email(request=self.request, user_instance=self.object)
-    #
-    #     return super().form_valid(form)
+    def form_valid(self, form):
+        _form = super().form_valid(form)
+        login(self.request, self.object)
+        return _form

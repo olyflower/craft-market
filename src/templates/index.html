@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+{% load static %}
+
 <html lang="en">
 
 <head>
@@ -11,7 +12,7 @@
 <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item" href="/">
-            <img src="logo.png" alt="Logo">
+            <img src="{% static 'logo.jpg' %}" alt="Logo">
         </a>
 
         <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -27,29 +28,36 @@
                 Home
             </a>
 
-            <a class="navbar-item" href="/catalog">
+            <a class="navbar-item" href="{% url 'craft:get_products' %}">
                 Catalog
             </a>
 
-            <a class="navbar-item" href="/about">
+            <a class="navbar-item" href="{% url 'craft:about' %}">
                 About
             </a>
 
-            <a class="navbar-item" href="/gallery">
-                Gallery
+            <a class="navbar-item" href="/sale">
+                Sale
             </a>
 
-            <a class="navbar-item" href="/search">
-                Search
-            </a>
-
-            <a class="navbar-item" href="/payment">
+            <a class="navbar-item" href="{% url 'craft:payment_delivery' %}">
                 Payment & Delivery
             </a>
 
-            <a class="navbar-item" href="/contacts">
+            <a class="navbar-item" href="{% url 'craft:contacts' %}">
                 Contacts
             </a>
+
+            <form action="{% url 'craft:get_products' %}" method="get">
+                <div class="field has-addons" style="margin-top: 1rem;">
+                    <div class="control">
+                        <input name="search_text" class="input" type="text" maxlength="128"/>
+                    </div>
+                    <div class="control">
+                        <input class="button is-primary" type="submit" value="Search items"/>
+                    </div>
+                </div>
+            </form>
         </div>
         <div class="navbar-end">
             <div class="navbar-item">
@@ -90,9 +98,59 @@
 {% block content %}
 <section class="section">
     <div class="container">
-        <!-- Content Goes Here -->
+        <div class="home-decor">
+            <h2 class="title has-text-centered">Home Decor</h2>
+            <div class="columns">
+                <div class="column">
+                    <figure class="image is-uncropped">
+                        <img src="{% static 'home_1.jpg' %}" alt="Home Decor 1">
+                    </figure>
+                    <p class="has-text-centered">Elegant and stylish home decor items for your living space.</p>
+                </div>
+                <div class="column">
+                    <figure class="image is-uncropped">
+                        <img src="{% static 'home_2.jpg' %}" alt="Home Decor 2">
+                    </figure>
+                    <p class="has-text-centered">Unique and handmade home decor items to elevate your home.</p>
+                </div>
+                <div class="column">
+                    <figure class="image is-uncropped">
+                        <img src="{% static 'home_3.jpg' %}" alt="Home Decor 3">
+                    </figure>
+                    <p class="has-text-centered">Handcrafted home decor items to add warmth and charm to your home.</p>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
+<section class="section">
+    <div class="container">
+        <div class="gifts">
+            <h2 class="title has-text-centered">Gifts</h2>
+            <div class="columns">
+                <div class="column">
+                    <figure class="image is-uncropped">
+                        <img src="{% static 'gift_1.jpg' %}" alt="Gift 1">
+                    </figure>
+                    <p class="has-text-centered">Unique and thoughtful handmade gifts for your loved ones.</p>
+                </div>
+                <div class="column">
+                    <figure class="image is-uncropped">
+                        <img src="{% static 'gift_2.jpg' %}" alt="Gift 2">
+                    </figure>
+                    <p class="has-text-centered">Handcrafted gifts that are perfect for special occasions.</p>
+                </div>
+                <div class="column">
+                    <figure class="image is-uncropped">
+                        <img src="{% static 'gift_3.jpg' %}" alt="Gift 3">
+                    </figure>
+                    <p class="has-text-centered">Thoughtful and meaningful gifts to show you care.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 {% endblock %}
 
 <footer class="footer">
