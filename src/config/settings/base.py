@@ -18,13 +18,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # Application definition
 
 INSTALLED_APPS = [
+    "admin_interface",
+    "colorfield",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_extensions",
+    "phonenumber_field",
+    "core",
+    "account",
+    "craft",
 ]
+
+X_FRAME_OPTIONS = "SAMEORIGIN"
+SILENCED_SYSTEM_CHECKS = ["security.W019"]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -38,10 +48,15 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "config.urls"
 
+AUTH_USER_MODEL = "account.Customer"
+
+LOGIN_REDIRECT_URL = "core:index"
+LOGOUT_REDIRECT_URL = "core:login"
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
