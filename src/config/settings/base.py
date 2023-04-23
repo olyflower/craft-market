@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_extensions",
     "phonenumber_field",
+    "core",
     "account",
     "craft",
 ]
@@ -49,10 +50,13 @@ ROOT_URLCONF = "config.urls"
 
 AUTH_USER_MODEL = "account.Customer"
 
+LOGIN_REDIRECT_URL = "core:index"
+LOGOUT_REDIRECT_URL = "core:login"
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
