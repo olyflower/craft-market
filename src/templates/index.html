@@ -36,7 +36,7 @@
                 About
             </a>
 
-            <a class="navbar-item" href="/sale">
+            <a class="navbar-item" href="{% url 'craft:sale' %}">
                 Sale
             </a>
 
@@ -63,7 +63,7 @@
             <div class="navbar-item">
                 <div class="buttons">
                     {% if user.is_authenticated %}
-                    <a class="button is-primary" href="/profile">
+                    <a class="button is-primary" href="{% url 'core:profile' %}">
                         <strong>Profile</strong>
                     </a>
                     <a class="button is-light" href="{% url 'core:logout' %}">
@@ -77,7 +77,7 @@
                         Log in
                     </a>
                     {% endif %}
-                    <a class="button is-light" href="/cart">
+                    <a class="button is-light" href="#">
                         Cart
                     </a>
                 </div>

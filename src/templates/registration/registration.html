@@ -1,71 +1,21 @@
 {% extends "index.html" %}
 
 {% block content %}
-
-<html>
-<head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
-</head>
-<body>
-    <section class="section">
-        <div class="container">
-            <div class="columns is-centered">
-                <div class="column is-half">
-                    <h1 class="title has-text-centered">Registration</h1>
-                    <form method="post" class="has-text-centered">
-                        {% csrf_token %}
-                        <div class="field">
-                            <label class="label">Email</label>
-                            <div class="control">
-                                <input class="input" type="email" name="{{ form.email.html_name }}" value="example@example.com" autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">First Name</label>
-                            <div class="control">
-                                <input class="input" type="text" name="{{ form.first_name.html_name }}" value="Mary">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">Last Name</label>
-                            <div class="control">
-                                <input class="input" type="text" name="{{ form.last_name.html_name }}" value="Smith">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">Phone Number</label>
-                            <div class="control">
-                                <input class="input" type="tel" name="{{ form.phone_number.html_name }}" value="+380677777777">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">City</label>
-                            <div class="control">
-                                <input class="input" type="text" name="{{ form.city.html_name }}" value="New York">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">Password</label>
-                            <div class="control">
-                                <input class="input" type="password" name="{{ form.password1.html_name }}" value="mypassword">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">Confirm Password</label>
-                            <div class="control">
-                                <input class="input" type="password" name="{{ form.password2.html_name }}" value="mypassword">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <div class="control has-text-centered">
-                                <input type="submit" value="Submit" class="button is-primary">
-                            </div>
-                        </div>
-                    </form>
+<div class="container mt-5">
+    <div class="columns is-centered">
+        <div class="column is-half">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form }}
+                <br>
+                <div class="field is-grouped is-grouped-centered">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Registration</button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
-    </section>
-</body>
-</html>
+    </div>
+    <div class="mt-5"></div>
+</div>
 {% endblock %}

@@ -1,3 +1,4 @@
+from _decimal import Decimal
 from django.contrib.auth import get_user_model
 from django.db import models
 from faker import Faker
@@ -68,6 +69,15 @@ class Product(BaseModel):
 
     def __str__(self):
         return f"{self.name} ({self.brand.name}{self.category.name})"
+
+    def price_with_discount(self):
+        if self.discount is not None:
+            discount_decimal = Decimal(str(self.discount))
+            price_decimal = Decimal(str(self.price))
+            discounted_price = price_decimal * (1 - discount_decimal / 100)
+            return "{:.2f}".format(discounted_price)
+        else:
+            return "{:.2f}".format(self.price)
 
     @classmethod
     def generate_instances(cls, count):

@@ -6,7 +6,6 @@ from craft.models import Product
 
 
 class GetProductsView(ListView):
-    login_url = "core:login"
     redirect_field_name = "index"
     template_name = "craft/products_list.html"
     model = Product
@@ -24,10 +23,15 @@ class GetProductsView(ListView):
 
 
 class ProductDetailView(DetailView):
-    login_url = "core:login"
     redirect_field_name = "index"
     template_name = "craft/product_detail.html"
     model = Product
+
+
+def sale(request):
+    products_in_sale = Product.objects.exclude(discount=0)
+    context = {"products_in_sale": products_in_sale}
+    return render(request, "craft/sale.html", context)
 
 
 def contacts(request):
