@@ -23,9 +23,18 @@ class BrandAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "price", "in_stock", "category", "brand", "quantity")
+    list_display = ("name", "price", "in_stock", "discount", "category", "brand", "quantity")
     list_filter = ("category", "brand")
     search_fields = ("name__istartswith",)
+    # actions = ["discount_10", "discount_0"]
+    #
+    # @admin.action(description="Set discount 10%")
+    # def discount_10(self, request, queryset):
+    #     queryset.update(discount=10)
+    #
+    # @admin.action(description="Set discount 0%")
+    # def discount_0(self, request, queryset):
+    #     queryset.update(discount=0)
 
 
 @admin.register(Order)

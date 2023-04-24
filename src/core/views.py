@@ -23,7 +23,7 @@ class UserLogout(LogoutView):
 class UserRegistration(CreateView):
     template_name = "registration/registration.html"
     form_class = UserRegistrationForm
-    success_url = reverse_lazy("core:success_registration")
+    success_url = reverse_lazy("core:index")
 
     def form_valid(self, form):
         _form = super().form_valid(form)

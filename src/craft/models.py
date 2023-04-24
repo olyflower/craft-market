@@ -57,6 +57,7 @@ class Product(BaseModel):
     description = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to="product/", blank=True, null=True)
     price = models.DecimalField(max_digits=8, decimal_places=2)
+    discount = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     in_stock = models.BooleanField(default=True)
     category = models.ForeignKey(to="craft.Category", related_name="products", on_delete=models.CASCADE)
     brand = models.ForeignKey(to="craft.Brand", related_name="products", on_delete=models.CASCADE)
@@ -74,9 +75,9 @@ class Product(BaseModel):
         for _ in range(count):
             cls.objects.create(
                 name=faker.word(),
-                user=get_user_model().objects.order_by("?").first(),
                 description=faker.sentence(),
                 price=faker.pydecimal(left_digits=2, right_digits=2, positive=True),
+                discount=faker.random_int(min=0, max=50),
                 in_stock=faker.boolean(),
                 category=Category.objects.order_by("?").first(),
                 brand=Brand.objects.order_by("?").first(),
