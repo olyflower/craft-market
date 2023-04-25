@@ -1,0 +1,26 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block content %}
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Order Details</h1>
+      <div class="box">
+        <p><strong>Order ID:</strong> {{ order.id }}</p>
+        <p><strong>Name:</strong> {{ order.name }}</p>
+        <p><strong>User:</strong> {{ order.user }}</p>
+        <p><strong>Status:</strong> {{ order.status }}</p>
+        <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+        <p><strong>Products:</strong></p>
+        <ul>
+          {% for product in order.product.all %}
+            <li>{{ product.name }} - {{ product.price }}</li>
+          {% empty %}
+            <li>No products</li>
+          {% endfor %}
+        </ul>
+      </div>
+       <a href="#" class="button is-primary">Checkout</a>
+    </div>
+  </section>
+{% endblock %}
