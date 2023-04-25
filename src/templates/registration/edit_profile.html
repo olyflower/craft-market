@@ -1,0 +1,21 @@
+{% extends "index.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1 class="title">Edit Profile</h1>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="field is-grouped">
+        <div class="control">
+          <button type="submit" class="button is-primary">Save</button>
+        </div>
+        <div class="control">
+          <a href="{% url 'core:profile' %}" class="button is-light">Cancel</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

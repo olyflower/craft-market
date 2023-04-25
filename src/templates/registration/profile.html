@@ -1,0 +1,32 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="title">User Profile</h1>
+    <div class="columns">
+        <div class="column is-one-third">
+            <figure class="image is-128x128">
+                {% if user.photo %}
+                <img src="{{ user.photo.url }}">
+                {% else %}
+                <img src="{% static 'logo.jpg' %}">
+                {% endif %}
+            </figure>
+            <p class="mt-2">Username: {{ user.profile.user.username }}</p>
+            <p class="mt-1">Email: {{ user.email }}</p>
+            <p class="mt-1">City: {{ user.profile.city }}</p>
+            <p class="mt-1">Gender: {{ user.profile.gender }}</p>
+            <p class="mt-1">Birth Date: {{ user.profile.birth_date }}</p>
+            <p class="mt-1">Address: {{ user.profile.address }}</p>
+            <p class="mt-1">Payment Method: {{ user.profile.payment_method }}</p>
+            <p class="mt-1">Social Media Profiles: {{ user.profile.social_media_profiles }}</p>
+            <a href="{% url 'core:edit_profile' pk=user.pk %}" class="button is-primary mt-4">Edit Profile</a>
+        </div>
+        <div class="column">
+            <h2 class="subtitle">Order History</h2>
+            <p>{{ user.profile.order_history }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
