@@ -30,14 +30,31 @@ class OrderView(View):
         user = request.user
         order = Order.objects.filter(user=user).first()
         if order:
-            context = {"order": order}
+            total = 0
+            for product in order.product.all():
+                total += product.price
+
+            context = {"order": order, "total": total}
             return render(request, "craft/order.html", context)
         else:
             context = {"message": "You dont have order yet."}
             return render(request, "craft/empty_order.html", context)
 
+    def post(self, request):
+        user = request.user
+        order = Order.objects.filter(user=user).first()
+        if order:
+            product_id = request.POST.get('product_id')
+            product = Product.objects.get(id=product_id)
+            order.product.remove(product)
+            total = 0
+            for product in order.product.all():
+                total += product.price
 
-@login_required
+            context = {"order": order, "total": total}
+            return render(request, "craft/order.html", context)
+
+
 def add_to_cart(request, id):
     if request.method == "POST":
         form = OrderForm(request.POST)
