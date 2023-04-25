@@ -44,7 +44,7 @@ class OrderView(View):
         user = request.user
         order = Order.objects.filter(user=user).first()
         if order:
-            product_id = request.POST.get('product_id')
+            product_id = request.POST.get("product_id")
             product = Product.objects.get(id=product_id)
             order.product.remove(product)
             total = 0
