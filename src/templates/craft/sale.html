@@ -25,11 +25,11 @@
                                 <p>Price: {{ product.price }}</p>
                                 <p>Discount: {{ product.discount }}%</p>
                                 <p>New price: {{ product.price_with_discount }}</p>
-                                <form action="#" method="post">
+                                <form method="post" action="{% url 'craft:add_to_cart' id=product.id %}">
                                     {% csrf_token %}
-                                    <input type="hidden" name="product_id" value="{{ product.pk }}">
+                                    <input type="hidden" name="product" value="{{ product.pk }}">
                                     <input type="hidden" name="quantity" value="1">
-                                    <button class="button is-primary" type="submit">Add to Cart</button>
+                                    <input type="submit" value="Add to Cart">
                                 </form>
                             </div>
                         </div>

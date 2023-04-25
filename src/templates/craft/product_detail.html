@@ -19,13 +19,12 @@
             <p>Brand: {{ product.brand.name }}</p>
             <p>Quantity: {{ product.quantity }}</p>
 
-            <form action="#" method="post">
+            <form method="post" action="{% url 'craft:add_to_cart' id=product.id %}">
                 {% csrf_token %}
-                <input type="hidden" name="product_id" value="{{ product.pk }}">
+                <input type="hidden" name="product" value="{{ product.pk }}">
                 <input type="hidden" name="quantity" value="1">
                 <input type="submit" value="Add to Cart">
             </form>
-
 
             <a class="button is-primary" href="{% url 'craft:get_products' %}">Back to Products</a>
 

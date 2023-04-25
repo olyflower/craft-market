@@ -1,7 +1,7 @@
 from django.urls import path
 
 from craft.views import (GetProductsView, OrderView, ProductDetailView, about,
-                         contacts, payment_delivery, sale)
+                         add_to_cart, contacts, payment_delivery, sale)
 
 app_name = "craft"
 
@@ -13,4 +13,5 @@ urlpatterns = [
     path("about/", about, name="about"),
     path("payment-delivery/", payment_delivery, name="payment_delivery"),
     path("order/", OrderView.as_view(), name="order"),
+    path("add-to-cart/<int:id>/", add_to_cart, name="add_to_cart"),
 ]

@@ -39,6 +39,12 @@
                                 <p>{{ product.description }}</p>
                                 <p>{{ product.price }}</p>
                                 <a class="button is-primary" href="{% url 'craft:product_detail' pk=product.pk %}">View Details</a>
+                                 <form method="post" action="{% url 'craft:add_to_cart' id=product.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="product" value="{{ product.pk }}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <input type="submit" value="Add to Cart">
+                                </form>
                             </div>
                         </div>
                     </div>

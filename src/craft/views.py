@@ -1,5 +1,6 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic import DetailView, ListView
 
@@ -34,6 +35,24 @@ class OrderView(View):
         else:
             context = {"message": "You dont have order yet."}
             return render(request, "craft/empty_order.html", context)
+
+
+@login_required
+def add_to_cart(request, id):
+    if request.method == "POST":
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            product_id = id
+            quantity = form.cleaned_data["quantity"]
+            product = Product.objects.get(id=product_id)
+            order, created = Order.objects.get_or_create(user=request.user, status="new")
+            order.product.add(product)
+            order.quantity += quantity
+            order.save()
+            return redirect("craft:order")
+    else:
+        form = OrderForm()
+    return render(request, "product_list.html", {"form": form})
 
 
 class ProductDetailView(DetailView):
