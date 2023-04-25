@@ -1,12 +1,10 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.shortcuts import render
 from django.views import View
 from django.views.generic import DetailView, ListView
 
 from craft.forms import OrderForm
-from craft.models import Product
+from craft.models import Order, Product
 
 
 class GetProductsView(ListView):
@@ -26,23 +24,16 @@ class GetProductsView(ListView):
         return Product.objects.all()
 
 
-class OrderCreateView(LoginRequiredMixin, View):
-    template_name = "craft/order.html"
-    form_class = OrderForm
-
-    def get(self, request, *args, **kwargs):
-        form = self.form_class()
-        return render(request, self.template_name, {"form": form})
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            order = form.save(commit=False)
-            order.user = request.user
-            order.save()
-            form.save_m2m()
-            return redirect("order:order_detail", pk=order.pk)
-        return render(request, self.template_name, {"form": form})
+class OrderView(View):
+    def get(self, request):
+        user = request.user
+        order = Order.objects.filter(user=user).first()
+        if order:
+            context = {"order": order}
+            return render(request, "craft/order.html", context)
+        else:
+            context = {"message": "You dont have order yet."}
+            return render(request, "craft/empty_order.html", context)
 
 
 class ProductDetailView(DetailView):
