@@ -1,7 +1,9 @@
 from _decimal import Decimal
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from faker import Faker
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class BaseModel(models.Model):
@@ -62,7 +64,7 @@ class Product(BaseModel):
     in_stock = models.BooleanField(default=True)
     category = models.ForeignKey(to="craft.Category", related_name="products", on_delete=models.CASCADE)
     brand = models.ForeignKey(to="craft.Brand", related_name="products", on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(blank=False, null=False)
+    quantity = models.PositiveIntegerField(default=0, null=True)
 
     class Meta:
         ordering = ["name"]
@@ -91,7 +93,6 @@ class Product(BaseModel):
                 in_stock=faker.boolean(),
                 category=Category.objects.order_by("?").first(),
                 brand=Brand.objects.order_by("?").first(),
-                quantity=faker.random_int(min=1, max=500),
             )
 
 
@@ -101,26 +102,19 @@ class Order(BaseModel):
         ("in_progress", "In progress"),
         ("completed", "Completed"),
     )
-    name = models.PositiveIntegerField(null=False, blank=False)
+    PAYMENT_METHOD_CHOICES = (("google_pay", "Google Pay"), ("paypal", "PayPal"))
+    order_name = models.PositiveIntegerField(default=0, blank=False)
     user = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE)
+    buyer_name = models.CharField(max_length=100)
+    buyer_phonenumber = PhoneNumberField(_("phone number"))
+    shipping_address = models.CharField(max_length=255)
+    payment_method = models.CharField(max_length=100, choices=PAYMENT_METHOD_CHOICES)
     product = models.ManyToManyField(to="craft.Product", related_name="order_products")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="new")
-    quantity = models.PositiveIntegerField(null=False, blank=False)
+    quantity = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["order_name"]
 
     def __str__(self):
-        return str(self.name)
-
-    @classmethod
-    def generate_instances(cls, count):
-        faker = Faker()
-        for _ in range(count):
-            order = cls.objects.create(
-                name=faker.random_number(digits=6),
-                user=get_user_model().objects.order_by("?").first(),
-                status=faker.random_element(elements=("new", "in_progress", "completed")),
-                quantity=faker.random_int(min=1, max=100),
-            )
-            order.product.set([Product.objects.order_by("?").first()])
+        return str(self.order_name)
