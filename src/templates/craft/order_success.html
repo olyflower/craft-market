@@ -1,10 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'index.html' %}
 
-</body>
-</html>
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-two-thirds">
+        <div class="box">
+          <h1 class="title">Order Successfully Placed</h1>
+          <p class="subtitle">Thank you for your order!</p>
+          <p>Your order has been successfully placed. You will receive an email confirmation shortly.</p>
+          <p>For any questions or inquiries, please contact our customer support.</p>
+        </div>
+        <a href="{% url 'core:index' %}" class="button is-primary">Back to Home</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

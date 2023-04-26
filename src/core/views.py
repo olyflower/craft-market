@@ -1,10 +1,9 @@
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView, UpdateView
+from django.views.generic import CreateView, TemplateView
 
-from account.models import UserProfile
-from core.forms import UserProfileForm, UserRegistrationForm
+from core.forms import UserRegistrationForm
 
 
 class IndexView(TemplateView):
@@ -30,18 +29,3 @@ class UserRegistration(CreateView):
         _form = super().form_valid(form)
         login(self.request, self.object)
         return _form
-
-
-class GetUserProfile(TemplateView):
-    template_name = "registration/profile.html"
-
-
-class EditUserProfileView(UpdateView):
-    login_url = "core:login"
-    model = UserProfile
-    form_class = UserProfileForm
-    template_name = "registration/edit_profile.html"
-    success_url = reverse_lazy("core:profile")
-
-    def get_queryset(self):
-        return super().get_queryset().filter(user=self.request.user)

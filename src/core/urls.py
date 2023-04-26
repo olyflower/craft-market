@@ -1,7 +1,7 @@
 from django.urls import path
 
-from core.views import (EditUserProfileView, GetUserProfile, IndexView,
-                        UserLogin, UserLogout, UserRegistration)
+from account.views import EditUserProfileView, GetUserProfile
+from core.views import IndexView, UserLogin, UserLogout, UserRegistration
 
 app_name = "core"
 

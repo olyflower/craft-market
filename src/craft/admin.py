@@ -39,7 +39,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ("name", "user", "status", "quantity", "product_count", "links_to_products")
+    list_display = ("order_name", "user", "status", "quantity", "product_count", "links_to_products")
     list_filter = ("status",)
     date_hierarchy = "create_datetime"
 
