@@ -26,15 +26,19 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ("name", "price", "in_stock", "discount", "category", "brand", "quantity")
     list_filter = ("category", "brand")
     search_fields = ("name__istartswith",)
-    # actions = ["discount_10", "discount_0"]
-    #
-    # @admin.action(description="Set discount 10%")
-    # def discount_10(self, request, queryset):
-    #     queryset.update(discount=10)
-    #
-    # @admin.action(description="Set discount 0%")
-    # def discount_0(self, request, queryset):
-    #     queryset.update(discount=0)
+    actions = ["set_discount_10", "set_discount_0"]
+
+    def set_discount_10(self, request, queryset):
+        discount_value = 10
+        queryset.update(discount=discount_value)
+
+    set_discount_10.short_description = "Set discount 10 percent for selected products"
+
+    def set_discount_0(self, request, queryset):
+        discount_value = 0
+        queryset.update(discount=discount_value)
+
+    set_discount_0.short_description = "Set discount 0 for selected products"
 
 
 @admin.register(Order)

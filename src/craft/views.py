@@ -2,7 +2,7 @@ from random import randint
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import DetailView, ListView
@@ -34,12 +34,9 @@ class OrderView(LoginRequiredMixin, View):
 
     def get(self, request):
         user = request.user
-        order = Order.objects.filter(user=user).first()
+        order, created = Order.objects.get_or_create(user=user)
         if order:
-            total = 0
-            for product in order.product.all():
-                total += product.price
-
+            total = order.total
             context = {"order": order, "total": total}
             return render(request, "craft/order.html", context)
         else:
@@ -51,15 +48,12 @@ class OrderView(LoginRequiredMixin, View):
         order = Order.objects.filter(user=user).first()
         if order:
             product_id = request.POST.get("product_id")
-            product = Product.objects.get(id=product_id)
+            product = get_object_or_404(Product, id=product_id)
             order.product.remove(product)
             order.quantity -= 1
+            order.total -= product.price
             order.save()
-            total = 0
-            for product in order.product.all():
-                total += product.price
-
-            context = {"order": order, "total": total}
+            context = {"order": order, "total": order.total}
             return render(request, "craft/order.html", context)
 
 
@@ -69,14 +63,14 @@ class AddToCartView(LoginRequiredMixin, View):
     def post(self, request, id):
         form = OrderForm(request.POST)
         if form.is_valid():
-            product_id = id
+            product = get_object_or_404(Product, id=id)
             quantity = form.cleaned_data["quantity"]
-            product = Product.objects.get(id=product_id)
             order, created = Order.objects.get_or_create(user=request.user, status="new")
             if not order.order_name:
                 order.order_name = randint(10000, 99999)
             order.product.add(product)
             order.quantity += quantity
+            order.total += product.price * quantity
             order.save()
             return redirect("craft:order")
         else:
@@ -89,38 +83,28 @@ class CheckoutView(LoginRequiredMixin, View):
 
     def get(self, request):
         user = request.user
-        order = Order.objects.filter(user=user).first()
+        order = get_object_or_404(Order, user=user)
         if order:
-            total = 0
-            for product in order.product.all():
-                total += product.price
-
-            context = {"order": order, "total": total, "form": CheckoutForm()}
+            context = {"order": order, "total": order.total, "form": CheckoutForm()}
             return render(request, "craft/checkout.html", context)
         else:
             return redirect("craft:order")
 
     def post(self, request):
         user = request.user
-        order = Order.objects.filter(user=user).first()
-        if order:
-            form = CheckoutForm(request.POST)
-            if form.is_valid():
-                order.buyer_name = form.cleaned_data["buyer_name"]
-                order.buyer_phonenumber = form.cleaned_data["buyer_phonenumber"]
-                order.shipping_address = form.cleaned_data["shipping_address"]
-                order.payment_method = form.cleaned_data["payment_method"]
-                order.save()
-                return render(request, "craft/order_success.html")
-            else:
-                total = 0
-                for product in order.product.all():
-                    total += product.price
-
-                context = {"order": order, "total": total, "form": form}
-                return render(request, "craft/checkout.html", context)
+        order = get_object_or_404(Order, user=user)
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            order.buyer_name = form.cleaned_data["buyer_name"]
+            order.buyer_phonenumber = form.cleaned_data["buyer_phonenumber"]
+            order.shipping_address = form.cleaned_data["shipping_address"]
+            order.payment_method = form.cleaned_data["payment_method"]
+            order.status = "processing"
+            order.save()
+            return render(request, "craft/order_success.html")
         else:
-            return redirect("craft:order")
+            context = {"order": order, "total": order.total, "form": form}
+            return render(request, "craft/checkout.html", context)
 
 
 class OrderSuccessView(View):

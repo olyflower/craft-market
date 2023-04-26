@@ -112,6 +112,7 @@ class Order(BaseModel):
     product = models.ManyToManyField(to="craft.Product", related_name="order_products")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="new")
     quantity = models.PositiveIntegerField(default=0)
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     class Meta:
         ordering = ["order_name"]
