@@ -1,8 +1,8 @@
 from django.urls import path
 
-from craft.views import (CartAddProduct, CartView, GetProductsView,
-                         ProductDetailView, about, contacts, payment_delivery,
-                         sale, CartItemDeleteView)
+from craft.views import (CartAddProduct, CartItemDeleteView, CartView,
+                         GetProductsView, ProductDetailView, about, contacts,
+                         payment_delivery, sale)
 
 app_name = "craft"
 

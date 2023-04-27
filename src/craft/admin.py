@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 
-from craft.models import (Brand, Cart, CartItem, Category, Order, OrderItem,
-                          Product, Favourite)
+from craft.models import (Brand, Cart, CartItem, Category, Favourite, Order,
+                          OrderItem, Product)
 
 
 class ProductAdminInline(admin.StackedInline):

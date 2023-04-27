@@ -55,7 +55,9 @@ class CartAddProduct(View):
         product_id = kwargs.get("product_id")
         cart = Cart.objects.get_or_create(user=request.user)[0]
         product = Product.objects.get(id=product_id)
-        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product, defaults={"price": product.price})
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart, product=product, defaults={"price": product.price}
+        )
         if not created:
             cart_item.quantity += 1
             cart_item.save()
@@ -84,7 +86,9 @@ class CartView(LoginRequiredMixin, TemplateView):
         product_id = request.POST.get("product_id")
         cart = Cart.objects.get_or_create(user=request.user)[0]
         product = Product.objects.get(id=product_id)
-        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product, defaults={"price": product.price})
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart, product=product, defaults={"price": product.price}
+        )
         if not created:
             cart_item.quantity += 1
             cart_item.save()
