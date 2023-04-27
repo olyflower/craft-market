@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 
-from craft.models import Brand, Category, Order, Product
+from craft.models import (Brand, Cart, CartItem, Category, Order, OrderItem,
+                          Product, Favourite)
 
 
 class ProductAdminInline(admin.StackedInline):
@@ -41,6 +42,16 @@ class ProductAdmin(admin.ModelAdmin):
     set_discount_0.short_description = "Set discount 0 for selected products"
 
 
+@admin.register(Cart)
+class CartAdmin(admin.ModelAdmin):
+    list_display = ("user", "quantity", "price")
+
+
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ("cart", "product", "quantity", "price")
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ("order_name", "user", "status", "quantity", "product_count", "links_to_products")
@@ -63,3 +74,8 @@ class OrderAdmin(admin.ModelAdmin):
                 )
             return format_html("</br></br>".join(links))
         return "No products found"
+
+
+@admin.register(OrderItem)
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = ("order", "product", "quantity", "price")

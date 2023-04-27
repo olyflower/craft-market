@@ -96,6 +96,37 @@ class Product(BaseModel):
             )
 
 
+class Favourite(BaseModel):
+    user = models.ForeignKey(to=get_user_model(), related_name="favourites", on_delete=models.CASCADE)
+    product = models.ForeignKey(to="craft.Product", related_name="favourite_product", on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ("user", "product")
+
+
+class Cart(BaseModel):
+    user = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=0)
+    price = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+
+
+class CartItem(BaseModel):
+    cart = models.ForeignKey(to="craft.Cart", related_name="cart_items", on_delete=models.CASCADE)
+    product = models.ForeignKey(to="craft.Product", on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+
+    class Meta:
+        unique_together = ("cart", "product")
+
+    def __str__(self):
+        return f"{self.quantity} x {self.product.name}"
+
+    @property
+    def total(self):
+        return self.price * self.quantity
+
+
 class Order(BaseModel):
     STATUS_CHOICES = (
         ("new", "New"),
@@ -109,13 +140,25 @@ class Order(BaseModel):
     buyer_phonenumber = PhoneNumberField(_("phone number"))
     shipping_address = models.CharField(max_length=255)
     payment_method = models.CharField(max_length=100, choices=PAYMENT_METHOD_CHOICES)
-    product = models.ManyToManyField(to="craft.Product", related_name="order_products")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="new")
     quantity = models.PositiveIntegerField(default=0)
-    total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    order_price = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
 
     class Meta:
         ordering = ["order_name"]
 
     def __str__(self):
         return str(self.order_name)
+
+
+class OrderItem(BaseModel):
+    order = models.ForeignKey(to="craft.Order", related_name="order_items", on_delete=models.CASCADE)
+    product = models.ForeignKey(to="craft.Product", related_name="ordered_in", on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+
+    class Meta:
+        ordering = ["id"]
+
+    def __str__(self):
+        return f"{self.product.name} x {self.quantity}"

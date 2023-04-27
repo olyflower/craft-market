@@ -1,0 +1,50 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Shopping Cart</h1>
+        <table class="table is-striped is-fullwidth">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.price }}</td>
+                    <td>
+                        <a href="{% url 'craft:delete_item' item.id %}" class="button is-danger is-outlined">
+                            <span class="icon is-small">
+                                <i class="fas fa-trash-alt"></i>
+                            </span>
+                            <span>Delete</span>
+                        </a>
+                    </td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="columns is-vcentered">
+            <div class="column">
+                <a href="{% url 'craft:get_products' %}" class="button is-link is-light">Back to Product List</a>
+            </div>
+            <div class="column">
+                <a href="{% url 'craft:sale' %}" class="button is-link is-light">Back to Sale</a>
+            </div>
+            <div class="column has-text-right">
+                <p class="title is-4">Total: {{ cart_total }}</p>
+                <a href="#" class="button is-primary">Proceed to Checkout</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
