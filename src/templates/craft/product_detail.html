@@ -19,7 +19,7 @@
             <p>Brand: {{ product.brand.name }}</p>
             <p>Quantity: {{ product.quantity }}</p>
 
-            <form method="post" action="{% url 'craft:add_to_cart' id=product.id %}">
+            <form method="post" action="{% url 'craft:add_to_cart' product_id=product.id %}">
                 {% csrf_token %}
                 <input type="hidden" name="product" value="{{ product.pk }}">
                 <input type="hidden" name="quantity" value="1">

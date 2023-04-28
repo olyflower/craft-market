@@ -1,35 +1,26 @@
-{% extends "index.html" %}
-{% load static %}
+{% extends 'index.html' %}
 
 {% block content %}
-  <section class="section">
-    <div class="container">
-      <h1 class="title">Order Details</h1>
-      <div class="box">
-        <p><strong>Order number:</strong> {{ order.order_name }}</p>
-        <p><strong>User:</strong> {{ order.user }}</p>
-        <p><strong>Status:</strong> {{ order.status }}</p>
-        <p><strong>Quantity:</strong> {{ order.quantity }}</p>
-        <p><strong>Products:</strong></p>
-        <ul>
-          {% for product in order.product.all %}
-            <li>
-              {{ product.name }} - {{ product.price }}
-              <form method="post" action="{% url 'craft:order' %}">
-                {% csrf_token %}
-                <input type="hidden" name="product_id" value="{{ product.id }}">
-                <button type="submit" class="button is-danger">Remove</button>
-              </form>
-            </li>
-          {% empty %}
-            <li>No products</li>
-          {% endfor %}
-        </ul>
-        <p><strong>Total:</strong> {{ total }}</p>
+<section class="section">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-two-thirds">
+        <h1 class="title has-text-centered">Order confirmation</h1>
+        <hr>
+        <div class="box">
+          <h2 class="subtitle">Order info</h2>
+          <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="field">
+              <div class="control">
+                <button class="button is-link">Confirm</button>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
-      <a href="{% url 'craft:checkout' %}" class="button is-primary">Checkout</a>
-      <a href="{% url 'craft:get_products' %}" class="button is-primary">Back to Product List</a>
-      <a href="{% url 'craft:sale' %}" class="button is-primary">Back to Sale</a>
     </div>
-  </section>
+  </div>
+</section>
 {% endblock %}

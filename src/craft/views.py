@@ -1,14 +1,15 @@
-from random import randint
+import random
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
-from django.shortcuts import redirect, render, get_object_or_404
-from django.urls import reverse_lazy
+from django.db.models import Q, Sum
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, TemplateView
 
-from craft.forms import CheckoutForm, OrderForm
-from craft.models import Order, Product
+from craft.forms import OrderForm
+from craft.models import Cart, CartItem, Order, OrderItem, Product
 
 
 class GetProductsView(ListView):
@@ -26,90 +27,6 @@ class GetProductsView(ListView):
             return Product.objects.filter(or_filter)
 
         return Product.objects.all()
-
-
-class OrderView(LoginRequiredMixin, View):
-    login_url = "core:login"
-    template_name = "craft/order.html"
-
-    def get(self, request):
-        user = request.user
-        order, created = Order.objects.get_or_create(user=user)
-        if order:
-            total = order.total
-            context = {"order": order, "total": total}
-            return render(request, "craft/order.html", context)
-        else:
-            context = {"message": "You dont have order yet."}
-            return render(request, "craft/empty_order.html", context)
-
-    def post(self, request):
-        user = request.user
-        order = Order.objects.filter(user=user).first()
-        if order:
-            product_id = request.POST.get("product_id")
-            product = get_object_or_404(Product, id=product_id)
-            order.product.remove(product)
-            order.quantity -= 1
-            order.total -= product.price
-            order.save()
-            context = {"order": order, "total": order.total}
-            return render(request, "craft/order.html", context)
-
-
-class AddToCartView(LoginRequiredMixin, View):
-    login_url = "core:login"
-
-    def post(self, request, id):
-        form = OrderForm(request.POST)
-        if form.is_valid():
-            product = get_object_or_404(Product, id=id)
-            quantity = form.cleaned_data["quantity"]
-            order, created = Order.objects.get_or_create(user=request.user, status="new")
-            if not order.order_name:
-                order.order_name = randint(10000, 99999)
-            order.product.add(product)
-            order.quantity += quantity
-            order.total += product.price * quantity
-            order.save()
-            return redirect("craft:order")
-        else:
-            return render(request, "product_list.html", {"form": form})
-
-
-class CheckoutView(LoginRequiredMixin, View):
-    login_url = "core:login"
-    template_name = "craft/checkout.html"
-
-    def get(self, request):
-        user = request.user
-        order = get_object_or_404(Order, user=user)
-        if order:
-            context = {"order": order, "total": order.total, "form": CheckoutForm()}
-            return render(request, "craft/checkout.html", context)
-        else:
-            return redirect("craft:order")
-
-    def post(self, request):
-        user = request.user
-        order = get_object_or_404(Order, user=user)
-        form = CheckoutForm(request.POST)
-        if form.is_valid():
-            order.buyer_name = form.cleaned_data["buyer_name"]
-            order.buyer_phonenumber = form.cleaned_data["buyer_phonenumber"]
-            order.shipping_address = form.cleaned_data["shipping_address"]
-            order.payment_method = form.cleaned_data["payment_method"]
-            order.status = "processing"
-            order.save()
-            return render(request, "craft/order_success.html")
-        else:
-            context = {"order": order, "total": order.total, "form": form}
-            return render(request, "craft/checkout.html", context)
-
-
-class OrderSuccessView(View):
-    template_name = "craft/order_success.html"
-    success_url = reverse_lazy("core:index")
 
 
 class ProductDetailView(DetailView):
@@ -134,3 +51,105 @@ def about(request):
 
 def payment_delivery(request):
     return render(request, "craft/payment_delivery.html")
+
+
+class CartAddProduct(View):
+    def post(self, request, *args, **kwargs):
+        product_id = kwargs.get("product_id")
+        cart = Cart.objects.get_or_create(user=request.user)[0]
+        product = Product.objects.get(id=product_id)
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart, product=product, defaults={"price": product.price}
+        )
+        if not created:
+            cart_item.quantity += 1
+            cart_item.save()
+        cart.quantity = sum([item.quantity for item in cart.cart_items.all()])
+        cart.price = sum([item.total for item in cart.cart_items.all()])
+        cart.save()
+        return HttpResponseRedirect(reverse("craft:cart"))
+
+
+class CartView(LoginRequiredMixin, TemplateView):
+    template_name = "craft/cart.html"
+    model = CartItem
+    login_url = reverse_lazy("core:login")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        cart = Cart.objects.get_or_create(user=user)[0]
+        context["cart_items"] = cart.cart_items.all()
+        context["cart_price"] = cart.price
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse_lazy("login"))
+        product_id = request.POST.get("product_id")
+        cart = Cart.objects.get_or_create(user=request.user)[0]
+        product = Product.objects.get(id=product_id)
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart, product=product, defaults={"price": product.price}
+        )
+        if not created:
+            cart_item.quantity += 1
+            cart_item.save()
+        cart.quantity = sum([item.quantity for item in cart.cart_items.all()])
+        cart.price = sum([item.total for item in cart.cart_items.all()])
+        cart.save()
+        return HttpResponseRedirect(reverse("craft:cart"))
+
+
+class CartItemDeleteView(LoginRequiredMixin, View):
+    login_url = reverse_lazy("core:login")
+
+    def get(self, request, *args, **kwargs):
+        item_id = kwargs["item_id"]
+        cart_item = CartItem.objects.get(id=item_id)
+        cart = cart_item.cart
+        cart_item.delete()
+        cart.quantity = sum([item.quantity for item in cart.cart_items.all()])
+        cart.price = sum([item.total for item in cart.cart_items.all()])
+        cart.save()
+        return HttpResponseRedirect(reverse("craft:cart"))
+
+
+class OrderView(View):
+    def get(self, request):
+        cart = Cart.objects.filter(user=request.user).first()
+        if not cart:
+            return redirect("cart")
+        form = OrderForm()
+        context = {"form": form, "cart": cart}
+        return render(request, "craft/order.html", context)
+
+    def post(self, request):
+        cart = Cart.objects.filter(user=request.user).first()
+        if not cart:
+            return redirect("cart")
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.user = request.user
+            order.quantity = cart.quantity
+            order.order_price = cart.cart_items.all().aggregate(Sum("price"))["price__sum"] or 0
+            order.order_name = str(random.randint(10000, 99999))
+            order.save()
+            order_items = [
+                OrderItem(order=order, product=item.product, quantity=item.quantity, price=item.price)
+                for item in cart.cart_items.all()
+            ]
+            OrderItem.objects.bulk_create(order_items)
+            cart.cart_items.all().delete()
+            return redirect(reverse("craft:order_success", kwargs={"order_id": order.pk}))
+        context = {"form": form, "cart": cart}
+        return render(request, "craft/order.html", context)
+
+
+class OrderDetailView(View):
+    def get(self, request, order_id):
+        order = get_object_or_404(Order, pk=order_id, user=request.user)
+        order_items = order.order_items.all()
+        context = {"order": order, "order_items": order_items}
+        return render(request, "craft/order_success.html", context)

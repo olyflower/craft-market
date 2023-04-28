@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 
-from craft.models import Brand, Category, Order, Product
+from craft.models import (Brand, Cart, CartItem, Category, Favourite, Order,
+                          OrderItem, Product)
 
 
 class ProductAdminInline(admin.StackedInline):
@@ -41,25 +42,23 @@ class ProductAdmin(admin.ModelAdmin):
     set_discount_0.short_description = "Set discount 0 for selected products"
 
 
+@admin.register(Cart)
+class CartAdmin(admin.ModelAdmin):
+    list_display = ("user", "quantity", "price")
+
+
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ("cart", "product", "quantity", "price")
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ("order_name", "user", "status", "quantity", "product_count", "links_to_products")
+    list_display = ("order_name", "user", "status", "quantity", "order_price")
     list_filter = ("status",)
     date_hierarchy = "create_datetime"
 
-    def product_count(self, obj):
-        if obj.product:
-            return obj.product.count()
-        return 0
 
-    def links_to_products(self, obj):
-        if obj.product:
-            products = obj.product.all()
-            links = []
-            for product in products:
-                links.append(
-                    f"<a class='button' href='{reverse('admin:craft_product_change', args=[product.pk])}'"
-                    f">{product.name}</a>"
-                )
-            return format_html("</br></br>".join(links))
-        return "No products found"
+@admin.register(OrderItem)
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = ("order", "product", "quantity", "price")
