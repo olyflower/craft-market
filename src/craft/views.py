@@ -35,10 +35,13 @@ class ProductDetailView(DetailView):
     model = Product
 
 
-def sale(request):
-    products_in_sale = Product.objects.exclude(discount=0)
-    context = {"products_in_sale": products_in_sale}
-    return render(request, "craft/sale.html", context)
+class SaleListView(ListView):
+    model = Product
+    template_name = "craft/sale.html"
+    context_object_name = "sale"
+
+    def get_queryset(self):
+        return super().get_queryset().exclude(discount=0)
 
 
 def contacts(request):
@@ -56,7 +59,7 @@ def payment_delivery(request):
 class CartAddProduct(View):
     def post(self, request, *args, **kwargs):
         product_id = kwargs.get("product_id")
-        cart = Cart.objects.get_or_create(user=request.user)[0]
+        cart, _ = Cart.objects.get_or_create(user=request.user)
         product = Product.objects.get(id=product_id)
         cart_item, created = CartItem.objects.get_or_create(
             cart=cart, product=product, defaults={"price": product.price}
