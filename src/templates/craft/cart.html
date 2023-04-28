@@ -28,7 +28,7 @@
                         </a>
                     </td>
                     <td>{{ item.quantity }}</td>
-                    <td>{{ item.total }}</td>
+                    <td>{{ item.price }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -41,8 +41,8 @@
                 <a href="{% url 'craft:sale' %}" class="button is-link is-light">Back to Sale</a>
             </div>
             <div class="column has-text-right">
-                <p class="title is-4">Total: {{ cart_total }}</p>
-                <a href="#" class="button is-primary">Proceed to Checkout</a>
+                <p class="title is-4">Total price: {{ cart_price }}</p>
+                <a href="{% url 'craft:order' %}" class="button is-primary">Proceed to Checkout</a>
             </div>
         </div>
     </div>

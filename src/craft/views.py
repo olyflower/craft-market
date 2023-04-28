@@ -1,16 +1,19 @@
+import random
+
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import DetailView, ListView, TemplateView
 
-from craft.models import Cart, CartItem, Product
+from craft.forms import OrderForm
+from craft.models import Cart, CartItem, Order, OrderItem, Product
 
 
 class GetProductsView(ListView):
-    redirect_name = "index"
+    redirect_field_name = "index"
     template_name = "craft/products_list.html"
     model = Product
 
@@ -77,7 +80,7 @@ class CartView(LoginRequiredMixin, TemplateView):
         user = self.request.user
         cart = Cart.objects.get_or_create(user=user)[0]
         context["cart_items"] = cart.cart_items.all()
-        context["cart_total"] = cart.price
+        context["cart_price"] = cart.price
         return context
 
     def post(self, request, *args, **kwargs):
@@ -110,3 +113,43 @@ class CartItemDeleteView(LoginRequiredMixin, View):
         cart.price = sum([item.total for item in cart.cart_items.all()])
         cart.save()
         return HttpResponseRedirect(reverse("craft:cart"))
+
+
+class OrderView(View):
+    def get(self, request):
+        cart = Cart.objects.filter(user=request.user).first()
+        if not cart:
+            return redirect("cart")
+        form = OrderForm()
+        context = {"form": form, "cart": cart}
+        return render(request, "craft/order.html", context)
+
+    def post(self, request):
+        cart = Cart.objects.filter(user=request.user).first()
+        if not cart:
+            return redirect("cart")
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.user = request.user
+            order.quantity = cart.quantity
+            order.order_price = cart.cart_items.all().aggregate(Sum("price"))["price__sum"] or 0
+            order.order_name = str(random.randint(10000, 99999))
+            order.save()
+            order_items = [
+                OrderItem(order=order, product=item.product, quantity=item.quantity, price=item.price)
+                for item in cart.cart_items.all()
+            ]
+            OrderItem.objects.bulk_create(order_items)
+            cart.cart_items.all().delete()
+            return redirect(reverse("craft:order_success", kwargs={"order_id": order.pk}))
+        context = {"form": form, "cart": cart}
+        return render(request, "craft/order.html", context)
+
+
+class OrderDetailView(View):
+    def get(self, request, order_id):
+        order = get_object_or_404(Order, pk=order_id, user=request.user)
+        order_items = order.order_items.all()
+        context = {"order": order, "order_items": order_items}
+        return render(request, "craft/order_success.html", context)
