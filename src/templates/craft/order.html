@@ -8,8 +8,7 @@
         <h1 class="title has-text-centered">Order confirmation</h1>
         <hr>
         <div class="box">
-          <h2 class="subtitle">Order №{{ order.order_name }}</h2>
-          <h3 class="subtitle">Order info</h3>
+          <h2 class="subtitle">Order info</h2>
           <form method="post">
             {% csrf_token %}
             {{ form.as_p }}

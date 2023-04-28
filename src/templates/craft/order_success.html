@@ -1,11 +1,12 @@
 {% extends "index.html" %}
 
 {% block content %}
-  <div class="container">
+<div class="container">
     <div class="notification is-success">
-      <h1 class="title">Thank you for your order!</h1>
-      <p class="subtitle">Your order has been successfully placed.</p>
-      <a href="{% url 'core:index' %}" class="button is-primary">Go back to homepage</a>
+        <h1 class="title">Thank you for your order!</h1>
+        <h2 class="subtitle">Order №{{ order.order_name }}</h2>
+        <p class="subtitle">Your order has been successfully placed.</p>
+        <a href="{% url 'core:index' %}" class="button is-primary">Go back to homepage</a>
     </div>
-  </div>
+</div>
 {% endblock %}
