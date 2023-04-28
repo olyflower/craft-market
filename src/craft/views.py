@@ -142,6 +142,8 @@ class OrderView(View):
             ]
             OrderItem.objects.bulk_create(order_items)
             cart.cart_items.all().delete()
+            cart.price = 0
+            cart.save()
             return redirect(reverse("craft:order_success", kwargs={"order_id": order.pk}))
         context = {"form": form, "cart": cart}
         return render(request, "craft/order.html", context)
