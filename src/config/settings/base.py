@@ -53,6 +53,8 @@ AUTH_USER_MODEL = "account.Customer"
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "core:login"
 
+SESSION_COOKIE_AGE = 86400
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",

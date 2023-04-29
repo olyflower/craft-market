@@ -1,13 +1,19 @@
 from django.contrib import admin
-from django.urls import reverse
-from django.utils.html import format_html
 
-from craft.models import (Brand, Cart, CartItem, Category, Favourite, Order,
-                          OrderItem, Product)
+from craft.models import (Brand, Cart, CartItem, Category, Order, OrderItem,
+                          Product)
 
 
 class ProductAdminInline(admin.StackedInline):
     model = Product
+
+
+class CartItemAdminInline(admin.StackedInline):
+    model = CartItem
+
+
+class OrderItemAdminInline(admin.StackedInline):
+    model = OrderItem
 
 
 @admin.register(Category)
@@ -45,6 +51,7 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
     list_display = ("user", "quantity", "price")
+    inlines = [CartItemAdminInline]
 
 
 @admin.register(CartItem)
@@ -57,6 +64,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ("order_name", "user", "status", "quantity", "order_price")
     list_filter = ("status",)
     date_hierarchy = "create_datetime"
+    inlines = [OrderItemAdminInline]
 
 
 @admin.register(OrderItem)

@@ -35,10 +35,13 @@ class ProductDetailView(DetailView):
     model = Product
 
 
-def sale(request):
-    products_in_sale = Product.objects.exclude(discount=0)
-    context = {"products_in_sale": products_in_sale}
-    return render(request, "craft/sale.html", context)
+class SaleListView(ListView):
+    model = Product
+    template_name = "craft/sale.html"
+    context_object_name = "sale"
+
+    def get_queryset(self):
+        return super().get_queryset().exclude(discount=0)
 
 
 def contacts(request):
@@ -53,21 +56,33 @@ def payment_delivery(request):
     return render(request, "craft/payment_delivery.html")
 
 
-class CartAddProduct(View):
+def update_cart(cart):
+    aggregate_sum = cart.cart_items.aggregate(quantity=Sum("quantity"), price=Sum("price"))
+    cart.quantity = aggregate_sum["quantity"] or 0
+    cart.price = aggregate_sum["price"] or 0
+    cart.save()
+
+
+class CartAddProduct(LoginRequiredMixin, View):
+    login_url = reverse_lazy("core:login")
+
     def post(self, request, *args, **kwargs):
         product_id = kwargs.get("product_id")
-        cart = Cart.objects.get_or_create(user=request.user)[0]
+        cart, _ = Cart.objects.get_or_create(user=request.user)
         product = Product.objects.get(id=product_id)
         cart_item, created = CartItem.objects.get_or_create(
             cart=cart, product=product, defaults={"price": product.price}
         )
         if not created:
             cart_item.quantity += 1
+            cart_item.price = product.price * cart_item.quantity
             cart_item.save()
-        cart.quantity = sum([item.quantity for item in cart.cart_items.all()])
-        cart.price = sum([item.total for item in cart.cart_items.all()])
-        cart.save()
-        return HttpResponseRedirect(reverse("craft:cart"))
+        update_cart(cart)
+        next_url = request.GET.get("next")
+        if next_url:
+            return HttpResponseRedirect(next_url)
+        else:
+            return HttpResponseRedirect(reverse("craft:cart"))
 
 
 class CartView(LoginRequiredMixin, TemplateView):
@@ -77,27 +92,17 @@ class CartView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        cart = Cart.objects.get_or_create(user=user)[0]
+        cart, _ = Cart.objects.get_or_create(user=self.request.user)
         context["cart_items"] = cart.cart_items.all()
         context["cart_price"] = cart.price
         return context
 
     def post(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return HttpResponseRedirect(reverse_lazy("login"))
         product_id = request.POST.get("product_id")
-        cart = Cart.objects.get_or_create(user=request.user)[0]
+        cart, _ = Cart.objects.get_or_create(user=request.user)
         product = Product.objects.get(id=product_id)
-        cart_item, created = CartItem.objects.get_or_create(
-            cart=cart, product=product, defaults={"price": product.price}
-        )
-        if not created:
-            cart_item.quantity += 1
-            cart_item.save()
-        cart.quantity = sum([item.quantity for item in cart.cart_items.all()])
-        cart.price = sum([item.total for item in cart.cart_items.all()])
-        cart.save()
+        CartItem.objects.get_or_create(cart=cart, product=product, defaults={"price": product.price})
+        update_cart(cart)
         return HttpResponseRedirect(reverse("craft:cart"))
 
 
@@ -109,31 +114,25 @@ class CartItemDeleteView(LoginRequiredMixin, View):
         cart_item = CartItem.objects.get(id=item_id)
         cart = cart_item.cart
         cart_item.delete()
-        cart.quantity = sum([item.quantity for item in cart.cart_items.all()])
-        cart.price = sum([item.total for item in cart.cart_items.all()])
-        cart.save()
+        update_cart(cart)
         return HttpResponseRedirect(reverse("craft:cart"))
 
 
 class OrderView(View):
     def get(self, request):
-        cart = Cart.objects.filter(user=request.user).first()
-        if not cart:
-            return redirect("cart")
+        cart = get_object_or_404(Cart, user=request.user)
         form = OrderForm()
         context = {"form": form, "cart": cart}
         return render(request, "craft/order.html", context)
 
     def post(self, request):
-        cart = Cart.objects.filter(user=request.user).first()
-        if not cart:
-            return redirect("cart")
+        cart = get_object_or_404(Cart, user=request.user)
         form = OrderForm(request.POST)
         if form.is_valid():
             order = form.save(commit=False)
             order.user = request.user
             order.quantity = cart.quantity
-            order.order_price = cart.cart_items.all().aggregate(Sum("price"))["price__sum"] or 0
+            order.order_price = cart.price
             order.order_name = str(random.randint(10000, 99999))
             order.save()
             order_items = [
@@ -142,6 +141,8 @@ class OrderView(View):
             ]
             OrderItem.objects.bulk_create(order_items)
             cart.cart_items.all().delete()
+            cart.price = 0
+            cart.save()
             return redirect(reverse("craft:order_success", kwargs={"order_id": order.pk}))
         context = {"form": form, "cart": cart}
         return render(request, "craft/order.html", context)

@@ -145,7 +145,7 @@ class Order(BaseModel):
     order_price = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
 
     class Meta:
-        ordering = ["order_name"]
+        ordering = ["user"]
 
     def __str__(self):
         return str(self.order_name)
