@@ -63,10 +63,10 @@ def update_cart(cart):
     cart.save()
 
 
-class CartAddProduct(LoginRequiredMixin, View):
-    login_url = reverse_lazy("core:login")
-
+class CartAddProduct(View):
     def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("core:login"))
         product_id = kwargs.get("product_id")
         cart, _ = Cart.objects.get_or_create(user=request.user)
         product = Product.objects.get(id=product_id)
@@ -77,12 +77,11 @@ class CartAddProduct(LoginRequiredMixin, View):
             cart_item.quantity += 1
             cart_item.price = product.price * cart_item.quantity
             cart_item.save()
+        if product.quantity > 0:
+            product.quantity -= 1
+            product.save()
         update_cart(cart)
-        next_url = request.GET.get("next")
-        if next_url:
-            return HttpResponseRedirect(next_url)
-        else:
-            return HttpResponseRedirect(reverse("craft:cart"))
+        return HttpResponseRedirect(reverse("craft:cart"))
 
 
 class CartView(LoginRequiredMixin, TemplateView):
