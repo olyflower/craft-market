@@ -26,12 +26,16 @@
                                 <p>Discount: {{ product.discount }}%</p>
                                 <p>New price: {{ product.price_with_discount }}</p>
                                 <a href="{% url 'craft:product_detail' product.id %}">Product details</a>
-                                <form method="post" action="{% url 'craft:add_to_cart' product_id=product.id %}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="product" value="{{ product.pk }}">
-                                    <input type="hidden" name="quantity" value="1">
-                                    <input type="submit" value="Add to Cart">
-                                </form>
+                           {% if request.user.is_authenticated %}
+                            <form method="post" action="{% url 'craft:add_to_cart' product_id=product.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="product" value="{{ product.pk }}">
+                                <input type="hidden" name="quantity" value="1">
+                                <input type="submit" value="Add to Cart">
+                            </form>
+                            {% else %}
+                            <a href="{% url 'core:login' %}?next={{ request.path }}">Login to add to cart</a>
+                            {% endif %}
                             </div>
                         </div>
                     </div>

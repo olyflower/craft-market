@@ -56,7 +56,9 @@ def payment_delivery(request):
     return render(request, "craft/payment_delivery.html")
 
 
-class CartAddProduct(View):
+class CartAddProduct(LoginRequiredMixin, View):
+    login_url = reverse_lazy("core:login")
+
     def post(self, request, *args, **kwargs):
         product_id = kwargs.get("product_id")
         cart, _ = Cart.objects.get_or_create(user=request.user)
@@ -66,11 +68,17 @@ class CartAddProduct(View):
         )
         if not created:
             cart_item.quantity += 1
+            cart_item.price = product.price * cart_item.quantity
             cart_item.save()
-        cart.quantity = sum([item.quantity for item in cart.cart_items.all()])
-        cart.price = sum([item.total for item in cart.cart_items.all()])
+        aggregate_sum = cart.cart_items.aggregate(quantity=Sum("quantity"), price=Sum("price"))
+        cart.quantity = aggregate_sum["quantity"] or 0
+        cart.price = aggregate_sum["price"] or 0
         cart.save()
-        return HttpResponseRedirect(reverse("craft:cart"))
+        next_url = request.GET.get("next")
+        if next_url:
+            return HttpResponseRedirect(next_url)
+        else:
+            return HttpResponseRedirect(reverse("craft:cart"))
 
 
 class CartView(LoginRequiredMixin, TemplateView):
@@ -80,26 +88,27 @@ class CartView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        cart = Cart.objects.get_or_create(user=user)[0]
+        cart, _ = Cart.objects.get_or_create(user=self.request.user)
         context["cart_items"] = cart.cart_items.all()
         context["cart_price"] = cart.price
         return context
 
     def post(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return HttpResponseRedirect(reverse_lazy("login"))
+        # if not request.user.is_authenticated:
+        #     return HttpResponseRedirect(reverse_lazy("login"))
         product_id = request.POST.get("product_id")
-        cart = Cart.objects.get_or_create(user=request.user)[0]
+        cart, _ = Cart.objects.get_or_create(user=request.user)
         product = Product.objects.get(id=product_id)
         cart_item, created = CartItem.objects.get_or_create(
             cart=cart, product=product, defaults={"price": product.price}
         )
         if not created:
             cart_item.quantity += 1
+            cart_item.price = product.price * cart_item.quantity
             cart_item.save()
-        cart.quantity = sum([item.quantity for item in cart.cart_items.all()])
-        cart.price = sum([item.total for item in cart.cart_items.all()])
+        aggregate_sum = cart.cart_items.aggregate(quantity=Sum("quantity"), price=Sum("price"))
+        cart.quantity = aggregate_sum["quantity"] or 0
+        cart.price = aggregate_sum["price"] or 0
         cart.save()
         return HttpResponseRedirect(reverse("craft:cart"))
 
