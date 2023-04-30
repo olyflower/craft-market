@@ -13,7 +13,6 @@ class TestCraftModel(TestCase):
             description="Test Product Description",
             price=19.99,
             discount=10.00,
-            in_stock=True,
             category=self.category,
             brand=self.brand,
             quantity=50,

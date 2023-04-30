@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from craft.models import (Brand, Cart, CartItem, Category, Order, OrderItem,
-                          Product)
+from craft.models import (Brand, Cart, CartItem, Category, Favourite, Order,
+                          OrderItem, Product)
 
 
 class ProductAdminInline(admin.StackedInline):
@@ -30,7 +30,7 @@ class BrandAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "price", "in_stock", "discount", "category", "brand", "quantity")
+    list_display = ("name", "price", "discount", "category", "brand", "quantity")
     list_filter = ("category", "brand")
     search_fields = ("name__istartswith",)
     actions = ["set_discount_10", "set_discount_0"]
@@ -70,3 +70,8 @@ class OrderAdmin(admin.ModelAdmin):
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ("order", "product", "quantity", "price")
+
+
+@admin.register(Favourite)
+class FavouriteAdmin(admin.ModelAdmin):
+    list_display = ("user", "product")

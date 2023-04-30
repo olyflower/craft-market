@@ -19,7 +19,7 @@
             {% for item in cart_items %}
             <tr>
                 <td>{{ item.product.name }}</td>
-                <td>{{ item.price }}</td>
+                <td>{{ item.product.price }}</td>
                 <td>
                     <a href="{% url 'craft:product_detail' item.product.id %}" class="button is-info is-outlined">
                         <span class="icon is-small">
@@ -48,12 +48,17 @@
             </div>
             <div class="column">
                 <a href="{% url 'craft:sale' %}" class="button is-link is-light">Back to Sale</a>
-            </div>
-            <div class="column has-text-right">
-                <p class="title is-4">Total price: {{ cart_price }}</p>
-                <a href="{% url 'craft:order' %}" class="button is-primary">Proceed to Checkout</a>
+                {% if cart_items %}
+                <div class="column has-text-right">
+                    <p class="title is-4">Total price: {{ cart_price }}</p>
+                    <a href="{% url 'craft:order' %}" class="button is-primary">Proceed to Checkout</a>
+                </div>
+                {% else %}
+                <div class="column has-text-right">
+                    <p class="title is-4">Your cart is empty</p>
+                </div>
+                {% endif %}
             </div>
         </div>
-    </div>
 </section>
 {% endblock %}

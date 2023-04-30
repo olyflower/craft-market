@@ -36,6 +36,12 @@
                 Sale
             </a>
 
+            {% if user.is_authenticated %}
+            <a class="navbar-item" href="{% url 'craft:favourites' %}">
+                Favourites
+            </a>
+            {% endif %}
+
             <a class="navbar-item" href="{% url 'craft:about' %}">
                 About
             </a>

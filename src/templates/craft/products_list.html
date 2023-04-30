@@ -37,18 +37,30 @@
                         </div>
                         <div class="content">
                             <p>{{ product.description }}</p>
-                            <p>{{ product.price }}</p>
+                            <p>Price: {{ product.price }}</p>
+                            <p>Discount: {{ product.discount }}</p>
+                            {% if product.quantity > 0 %}
+                            <p>In stock</p>
+                            {% else %}
+                            <p>Sold out</p>
+                            {% endif %}
                             <a href="{% url 'craft:product_detail' product.id %}">Product details</a>
-                            {% if request.user.is_authenticated %}
+
                             <form method="post" action="{% url 'craft:add_to_cart' product_id=product.id %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="product" value="{{ product.pk }}">
                                 <input type="hidden" name="quantity" value="1">
+                                {% if product.quantity == 0 %}
+                                <input type="submit" value="Out of stock" disabled>
+                                {% else %}
                                 <input type="submit" value="Add to Cart">
+                                {% endif %}
                             </form>
-                            {% else %}
-                            <a href="{% url 'core:login' %}?next={{ request.path }}">Login to add to cart</a>
-                            {% endif %}
+
+                            <form method="post" action="{% url 'craft:add_to_favourites' product_id=product.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">Add to Favourites</button>
+                            </form>
                         </div>
                     </div>
                 </div>
