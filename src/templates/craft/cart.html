@@ -19,7 +19,7 @@
             {% for item in cart_items %}
             <tr>
                 <td>{{ item.product.name }}</td>
-                <td>{{ item.price }}</td>
+                <td>{{ item.product.price }}</td>
                 <td>
                     <a href="{% url 'craft:product_detail' item.product.id %}" class="button is-info is-outlined">
                         <span class="icon is-small">

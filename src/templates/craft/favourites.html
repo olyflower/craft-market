@@ -23,7 +23,7 @@
                 <td>{{ favourite.product.category }}</td>
                 <td>{{ favourite.product.brand }}</td>
                 <td>{{ favourite.product.price }}</td>
-                {% if favourite.product.in_stock %}
+                {% if favourite.product.quantity > 0 %}
                 <td>In stock</td>
                 {% else %}
                 <td>Sold out</td>
@@ -31,7 +31,7 @@
                 <td>
                     <form action="{% url 'craft:add_to_cart' product_id=favourite.product.id %}" method="post">
                         {% csrf_token %}
-                        {% if not favourite.product.in_stock %}
+                        {% if favourite.product.quantity == 0 %}
                         <button class="button is-success is-small" type="submit" disabled>Add to Cart</button>
                         {% else %}
                         <button class="button is-success is-small" type="submit">Add to Cart</button>

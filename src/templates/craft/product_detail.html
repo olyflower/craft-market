@@ -18,7 +18,7 @@
         <div class="column is-6">
             <p>Category: {{ product.category.name }}</p>
             <p>Brand: {{ product.brand.name }}</p>
-            {% if product.in_stock %}
+            {% if product.quantity > 0 %}
             <p>In stock</p>
             {% else %}
             <p>Sold out</p>
@@ -29,7 +29,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="product" value="{{ product.pk }}">
                 <input type="hidden" name="quantity" value="1">
-                {% if not product.in_stock %}
+                {% if product.quantity == 0 %}
                 <input type="submit" value="Out of stock" disabled>
                 {% else %}
                 <input type="submit" value="Add to Cart">

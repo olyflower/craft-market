@@ -30,7 +30,7 @@ class BrandAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "price", "in_stock", "discount", "category", "brand", "quantity")
+    list_display = ("name", "price", "discount", "category", "brand", "quantity")
     list_filter = ("category", "brand")
     search_fields = ("name__istartswith",)
     actions = ["set_discount_10", "set_discount_0"]
