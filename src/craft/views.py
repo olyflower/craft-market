@@ -93,7 +93,7 @@ class CartAddProduct(View):
             return HttpResponseRedirect(reverse("core:login"))
         product_id = kwargs.get("product_id")
         cart, _ = Cart.objects.get_or_create(user=request.user)
-        product = Product.objects.get(id=product_id)
+        product = get_object_or_404(Product, id=product_id, in_stock=True)
         cart_item, created = CartItem.objects.get_or_create(
             cart=cart, product=product, defaults={"price": product.price}
         )

@@ -11,6 +11,8 @@
                 <th>Category</th>
                 <th>Brand</th>
                 <th>Price</th>
+                <th>Availability</th>
+                <th>Actions</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -21,10 +23,19 @@
                 <td>{{ favourite.product.category }}</td>
                 <td>{{ favourite.product.brand }}</td>
                 <td>{{ favourite.product.price }}</td>
+                {% if favourite.product.in_stock %}
+                <td>In stock</td>
+                {% else %}
+                <td>Sold out</td>
+                {% endif %}
                 <td>
                     <form action="{% url 'craft:add_to_cart' product_id=favourite.product.id %}" method="post">
                         {% csrf_token %}
+                        {% if not favourite.product.in_stock %}
+                        <button class="button is-success is-small" type="submit" disabled>Add to Cart</button>
+                        {% else %}
                         <button class="button is-success is-small" type="submit">Add to Cart</button>
+                        {% endif %}
                     </form>
                 </td>
                 <td>

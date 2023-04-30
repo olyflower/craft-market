@@ -25,13 +25,22 @@
                                 <p>Price: {{ product.price }}</p>
                                 <p>Discount: {{ product.discount }}%</p>
                                 <p>New price: {{ product.price_with_discount }}</p>
+                                {% if product.in_stock %}
+                                <p>In stock</p>
+                                {% else %}
+                                <p>Sold out</p>
+                                {% endif %}
                                 <a href="{% url 'craft:product_detail' product.id %}">Product details</a>
-                            <form method="post" action="{% url 'craft:add_to_cart' product_id=product.id %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="product" value="{{ product.pk }}">
-                                <input type="hidden" name="quantity" value="1">
-                                <input type="submit" value="Add to Cart">
-                            </form>
+                                <form method="post" action="{% url 'craft:add_to_cart' product_id=product.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="product" value="{{ product.pk }}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    {% if not product.in_stock %}
+                                    <input type="submit" value="Out of stock" disabled>
+                                    {% else %}
+                                    <input type="submit" value="Add to Cart">
+                                    {% endif %}
+                                </form>
                             </div>
                         </div>
                     </div>
