@@ -37,7 +37,9 @@
                         </div>
                         <div class="content">
                             <p>{{ product.description }}</p>
-                            <p>{{ product.price }}</p>
+                            <p>Price: {{ product.price }}</p>
+                            <p>Discount: {{ product.discount }}</p>
+
                             <a href="{% url 'craft:product_detail' product.id %}">Product details</a>
 
                             <form method="post" action="{% url 'craft:add_to_cart' product_id=product.id %}">
@@ -47,6 +49,10 @@
                                 <input type="submit" value="Add to Cart">
                             </form>
 
+                            <form method="post" action="{% url 'craft:add_to_favourites' product_id=product.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">Add to Favourites</button>
+                                </form>
                         </div>
                     </div>
                 </div>

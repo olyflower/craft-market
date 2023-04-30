@@ -1,10 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'index.html' %}
 
-</body>
-</html>
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">My Favourites</h1>
+        <table class="table is-striped">
+            <thead>
+            <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Brand</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for favourite in object_list %}
+            <tr>
+                <td>{{ favourite.product.name }}</td>
+                <td>{{ favourite.product.category }}</td>
+                <td>{{ favourite.product.brand }}</td>
+                <td>{{ favourite.product.price }}</td>
+                <td>
+                    <form action="{% url 'craft:add_to_cart' product_id=favourite.product.id %}" method="post">
+                        {% csrf_token %}
+                        <button class="button is-success is-small" type="submit">Add to Cart</button>
+                    </form>
+                </td>
+                <td>
+                    <form action="{% url 'craft:remove_from_favourites' pk=favourite.id %}" method="post">
+                        {% csrf_token %}
+                        <button class="button is-danger is-small" type="submit">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">No favourites yet.</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

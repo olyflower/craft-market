@@ -1,3 +1,5 @@
+import random
+
 from _decimal import Decimal
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -89,10 +91,11 @@ class Product(BaseModel):
                 name=faker.word(),
                 description=faker.sentence(),
                 price=faker.pydecimal(left_digits=2, right_digits=2, positive=True),
-                discount=faker.random_int(min=0, max=50),
+                discount=random.randint(0, 25),
                 in_stock=faker.boolean(),
                 category=Category.objects.order_by("?").first(),
                 brand=Brand.objects.order_by("?").first(),
+                quantity=random.randint(1, 100),
             )
 
 

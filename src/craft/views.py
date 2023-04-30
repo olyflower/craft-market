@@ -1,3 +1,4 @@
+import datetime
 import random
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -6,10 +7,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import DetailView, ListView, TemplateView
+from django.views.generic import DeleteView, DetailView, ListView, TemplateView
 
 from craft.forms import OrderForm
-from craft.models import Cart, CartItem, Order, OrderItem, Product
+from craft.models import Cart, CartItem, Favourite, Order, OrderItem, Product
 
 
 class GetProductsView(ListView):
@@ -42,6 +43,29 @@ class SaleListView(ListView):
 
     def get_queryset(self):
         return super().get_queryset().exclude(discount=0)
+
+
+class FavoritesView(LoginRequiredMixin, ListView):
+    login_url = "core:login"
+    redirect_field_name = "index"
+    template_name = "craft/favourites.html"
+    model = Favourite
+
+
+class AddToFavoritesView(View):
+    def post(self, request, product_id):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("core:login"))
+        Favourite.objects.create(user=request.user, product_id=product_id)
+        return redirect("craft:favourites")
+
+
+class RemoveFromFavourites(DeleteView):
+    model = Favourite
+    success_url = reverse_lazy("craft:favourites")
+
+    def get_queryset(self):
+        return Favourite.objects.filter(user=self.request.user)
 
 
 def contacts(request):
@@ -81,7 +105,7 @@ class CartAddProduct(View):
             product.quantity -= 1
             product.save()
         update_cart(cart)
-        return HttpResponseRedirect(reverse("craft:cart"))
+        return redirect("craft:cart")
 
 
 class CartView(LoginRequiredMixin, TemplateView):
@@ -132,7 +156,7 @@ class OrderView(View):
             order.user = request.user
             order.quantity = cart.quantity
             order.order_price = cart.price
-            order.order_name = str(random.randint(10000, 99999))
+            order.order_name = datetime.datetime.now().strftime("%Y%m%d%H%M%S") + str(random.randint(100, 999))
             order.save()
             order_items = [
                 OrderItem(order=order, product=item.product, quantity=item.quantity, price=item.price)
