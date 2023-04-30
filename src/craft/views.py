@@ -56,7 +56,9 @@ class AddToFavoritesView(View):
     def post(self, request, product_id):
         if not request.user.is_authenticated:
             return HttpResponseRedirect(reverse("core:login"))
-        Favourite.objects.create(user=request.user, product_id=product_id)
+        favourite, created = Favourite.objects.get_or_create(user=request.user, product_id=product_id)
+        if not created:
+            return redirect("craft:favourites")
         return redirect("craft:favourites")
 
 
@@ -134,8 +136,12 @@ class CartItemDeleteView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         item_id = kwargs["item_id"]
-        cart_item = CartItem.objects.get(id=item_id)
+        cart_item = get_object_or_404(CartItem, id=item_id)
         cart = cart_item.cart
+        product = cart_item.product
+        if product:
+            product.quantity += cart_item.quantity
+            product.save()
         cart_item.delete()
         update_cart(cart)
         return HttpResponseRedirect(reverse("craft:cart"))
