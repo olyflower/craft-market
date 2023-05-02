@@ -45,9 +45,9 @@
         <div class="columns is-vcentered">
             <div class="column">
                 <a href="{% url 'craft:get_products' %}" class="button is-link is-light">Back to Product List</a>
+                <a href="{% url 'craft:sale' %}" class="button is-link is-light">Back to Sale</a>
             </div>
             <div class="column">
-                <a href="{% url 'craft:sale' %}" class="button is-link is-light">Back to Sale</a>
                 {% if cart_items %}
                 <div class="column has-text-right">
                     <p class="title is-4">Total price: {{ cart_price }}</p>
@@ -60,5 +60,6 @@
                 {% endif %}
             </div>
         </div>
+    </div>
 </section>
 {% endblock %}
