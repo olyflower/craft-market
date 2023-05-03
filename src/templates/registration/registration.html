@@ -1,0 +1,21 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="columns is-centered">
+        <div class="column is-half">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form }}
+                <br>
+                <div class="field is-grouped is-grouped-centered">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Registration</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="mt-5"></div>
+</div>
+{% endblock %}

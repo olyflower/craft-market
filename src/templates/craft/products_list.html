@@ -1,0 +1,75 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block content %}
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Product List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+</head>
+
+<body>
+<section class="section">
+    <div class="container">
+        <h1 class="title has-text-centered">Product List</h1>
+        <div class="columns is-multiline">
+            {% for product in object_list %}
+            <div class="column is-one-third">
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image is-uncropped">
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="Product Image">
+                            {% else %}
+                            <img src="{% static 'gift_1.jpg' %}" alt="Product Image">
+                            {% endif %}
+                        </figure>
+                    </div>
+                    <div class="card-content">
+                        <div class="media">
+                            <div class="media-content">
+                                <p class="title is-4">{{ product.name }}</p>
+                                <p class="subtitle is-6">{{ product.category }}</p>
+                            </div>
+                        </div>
+                        <div class="content">
+                            <p>{{ product.description }}</p>
+                            <p>Price: {{ product.price }}</p>
+                            <p>Discount: {{ product.discount }}</p>
+                            {% if product.quantity > 0 %}
+                            <p>In stock</p>
+                            {% else %}
+                            <p>Sold out</p>
+                            {% endif %}
+                            <a href="{% url 'craft:product_detail' product.id %}">Product details</a>
+
+                            <form method="post" action="{% url 'craft:add_to_cart' product_id=product.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="product" value="{{ product.pk }}">
+                                <input type="hidden" name="quantity" value="1">
+                                {% if product.quantity == 0 %}
+                                <input type="submit" value="Out of stock" disabled>
+                                {% else %}
+                                <input type="submit" value="Add to Cart">
+                                {% endif %}
+                            </form>
+
+                            <form method="post" action="{% url 'craft:add_to_favourites' product_id=product.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">Add to Favourites</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+</body>
+
+</html>
+{% endblock %}

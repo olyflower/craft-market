@@ -1,0 +1,171 @@
+{% load static %}
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Craft-Market - Handmade Online Store</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+</head>
+
+<body>
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            <img src="{% static 'logo.jpg' %}" alt="Logo" style="border-radius: 50%;">
+        </a>
+
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="{% url 'core:index' %}">
+                Home
+            </a>
+
+            <a class="navbar-item" href="{% url 'craft:get_products' %}">
+                Catalog
+            </a>
+
+            <a class="navbar-item" href="{% url 'craft:sale' %}">
+                Sale
+            </a>
+
+            {% if user.is_authenticated %}
+            <a class="navbar-item" href="{% url 'craft:favourites' %}">
+                Favourites
+            </a>
+            {% endif %}
+
+            <a class="navbar-item" href="{% url 'craft:about' %}">
+                About
+            </a>
+
+            <a class="navbar-item" href="{% url 'craft:payment_delivery' %}">
+                Payment & Delivery
+            </a>
+
+            <a class="navbar-item" href="{% url 'craft:contacts' %}">
+                Contacts
+            </a>
+
+            <form action="{% url 'craft:get_products' %}" method="get">
+                <div class="field has-addons" style="margin-top: 1rem;">
+                    <div class="control">
+                        <input name="search_text" class="input" type="text" maxlength="128"/>
+                    </div>
+                    <div class="control">
+                        <input class="button is-primary" type="submit" value="Search items"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <div class="buttons">
+                    {% if user.is_authenticated %}
+                    <a class="button is-primary" href="{% url 'core:profile' %}">
+                        <strong>Profile</strong>
+                    </a>
+                    <a class="button is-light" href="{% url 'core:logout' %}">
+                        Log out
+                    </a>
+                    {% else %}
+                    <a class="button is-primary" href="{% url 'core:registration' %}">
+                        <strong>Sign up</strong>
+                    </a>
+                    <a class="button is-light" href="{% url 'core:login' %}">
+                        Log in
+                    </a>
+                    {% endif %}
+                    <a class="button is-light" href="{% url 'craft:cart' %}">
+                        Cart
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<section class="hero is-primary">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">Welcome to Craft-Market</h1>
+            <h2 class="subtitle">Discover unique handmade items</h2>
+        </div>
+    </div>
+</section>
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="home-decor">
+            <h2 class="title has-text-centered">Home Decor</h2>
+            <div class="columns">
+                <div class="column">
+                    <figure class="image is-uncropped">
+                        <img src="{% static 'home_1.jpg' %}" alt="Home Decor 1">
+                    </figure>
+                    <p class="has-text-centered">Elegant and stylish home decor items for your living space.</p>
+                </div>
+                <div class="column">
+                    <figure class="image is-uncropped">
+                        <img src="{% static 'home_2.jpg' %}" alt="Home Decor 2">
+                    </figure>
+                    <p class="has-text-centered">Unique and handmade home decor items to elevate your home.</p>
+                </div>
+                <div class="column">
+                    <figure class="image is-uncropped">
+                        <img src="{% static 'home_3.jpg' %}" alt="Home Decor 3">
+                    </figure>
+                    <p class="has-text-centered">Handcrafted home decor items to add warmth and charm to your home.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="section">
+    <div class="container">
+        <div class="gifts">
+            <h2 class="title has-text-centered">Gifts</h2>
+            <div class="columns">
+                <div class="column">
+                    <figure class="image is-uncropped">
+                        <img src="{% static 'gift_1.jpg' %}" alt="Gift 1">
+                    </figure>
+                    <p class="has-text-centered">Unique and thoughtful handmade gifts for your loved ones.</p>
+                </div>
+                <div class="column">
+                    <figure class="image is-uncropped">
+                        <img src="{% static 'gift_2.jpg' %}" alt="Gift 2">
+                    </figure>
+                    <p class="has-text-centered">Handcrafted gifts that are perfect for special occasions.</p>
+                </div>
+                <div class="column">
+                    <figure class="image is-uncropped">
+                        <img src="{% static 'gift_3.jpg' %}" alt="Gift 3">
+                    </figure>
+                    <p class="has-text-centered">Thoughtful and meaningful gifts to show you care.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+<footer class="footer">
+    <div class="content has-text-centered">
+        <p>
+            Craft-Market - Handmade Online Store - 2023.
+        </p>
+    </div>
+</footer>
+</body>
+
+</html>

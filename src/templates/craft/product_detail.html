@@ -1,0 +1,44 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="columns">
+        <div class="column is-6">
+            <h1 class="title">{{ product.name }}</h1>
+            <p>{{ product.description }}</p>
+            <p>Price: {{ product.price }}</p>
+            <p>Discount: {{ product.discount }}</p>
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="Product Image">
+            {% else %}
+            <img src="{% static 'gift_1.jpg' %}" alt="Product Image">
+            {% endif %}
+        </div>
+        <div class="column is-6">
+            <p>Category: {{ product.category.name }}</p>
+            <p>Brand: {{ product.brand.name }}</p>
+            {% if product.quantity > 0 %}
+            <p>In stock</p>
+            {% else %}
+            <p>Sold out</p>
+            {% endif %}
+            <p>Quantity: {{ product.quantity }}</p>
+
+            <form method="post" action="{% url 'craft:add_to_cart' product_id=product.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="product" value="{{ product.pk }}">
+                <input type="hidden" name="quantity" value="1">
+                {% if product.quantity == 0 %}
+                <input type="submit" value="Out of stock" disabled>
+                {% else %}
+                <input type="submit" value="Add to Cart">
+                {% endif %}
+            </form>
+
+            <a class="button is-primary" href="{% url 'craft:get_products' %}">Back to Products</a>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
