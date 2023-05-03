@@ -2,11 +2,11 @@ import os
 
 from config.settings.base import *  # noqa
 
-DEBUG = False
+DEBUG = True
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
-ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = ["localhost", "ec2-23-22-201-133.compute-1.amazonaws.com"]
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
