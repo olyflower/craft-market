@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <style>
     .navbar-burger span {
-      height: 3px;
+      height: 10px;
       width: 50px;
       background-color: #333;
       display: block;
@@ -21,13 +21,13 @@
     }
     .navbar-burger {
       width: 100px;
+      margin-left: 0px;
     }
     .navbar-burger::before {
     content: "Menu";
     font-weight: bold;
     padding: 0 45px;
     }
-
     </style>
 </head>
 
@@ -37,7 +37,6 @@
         <a class="navbar-item" href="/">
             <img src="{% static 'logo.jpg' %}" alt="Logo" style="border-radius: 50%;">
         </a>
-
         <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
