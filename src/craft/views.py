@@ -1,6 +1,7 @@
 import datetime
 import random
 
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Sum
 from django.http import HttpResponseRedirect
@@ -96,17 +97,19 @@ class CartAddProduct(View):
         product_id = kwargs.get("product_id")
         cart, _ = Cart.objects.get_or_create(user=request.user)
         product = get_object_or_404(Product, id=product_id)
-        cart_item, created = CartItem.objects.get_or_create(
-            cart=cart, product=product, defaults={"price": product.price}
-        )
-        if not created:
-            cart_item.quantity += 1
-            cart_item.price = product.price * cart_item.quantity
-            cart_item.save()
         if product.quantity > 0:
+            cart_item, created = CartItem.objects.get_or_create(
+                cart=cart, product=product, defaults={"price": product.price}
+            )
+            if not created:
+                cart_item.quantity += 1
+                cart_item.price = product.price * cart_item.quantity
+                cart_item.save()
             product.quantity -= 1
             product.save()
-        update_cart(cart)
+            update_cart(cart)
+        else:
+            messages.error(request, "This product is out of stock.")
         return redirect("craft:cart")
 
 
