@@ -27,10 +27,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_extensions",
+    "rest_framework",
     "phonenumber_field",
     "core",
     "account",
     "craft",
+    "api",
 ]
 
 X_FRAME_OPTIONS = "SAMEORIGIN"

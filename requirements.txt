@@ -6,6 +6,7 @@ django-admin-interface==0.25.0
 django-colorfield==0.8.0
 django-extensions==3.2.1
 django-phonenumber-field==7.0.2
+djangorestframework==3.14.0
 Faker==18.4.0
 flake8==6.0.0
 gunicorn==20.1.0
