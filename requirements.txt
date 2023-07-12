@@ -10,7 +10,7 @@ cryptography==40.0.2
 defusedxml==0.7.1
 Django==4.2.1
 django-admin-interface==0.25.0
-django-colorfield==0.8.0
+django-colorfield==0.9.0
 django-extensions==3.2.1
 django-phonenumber-field==7.0.2
 django-templated-mail==1.1.1
